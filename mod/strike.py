@@ -6,6 +6,8 @@ settings = yaml.full_load(open("config.yml"))
 
 
 class ModCommands(commands.Cog):
+         def __init__(self, client):
+             self.client = client
          @commands.command(name='strike', help='gives user a strike')
          async def sync(self, ctx, arg1, arg2, *args):
              if settings['modrole'] in [i.name.lower() for i in ctx.author.roles]:
@@ -19,7 +21,7 @@ class ModCommands(commands.Cog):
                      
                  if settings['warn_channel']:    
                      print(settings['warn_channel'])
-                     channel = discord.Client.get_channel(790757133355974656)
+                     channel = self.client.get_channel(790757133355974656)
                      await channel.send(embed=warn_embed)
              else:
                  embedVar = discord.Embed(title="Sorry",
