@@ -1,6 +1,0 @@
-locked_ansible: True
-modrole: "moderator"
-ansible_file: "urls.yml"
-linux_file: "linux_man.yml"
-prefix: "./"
-warn_channel: 790757133355974656
