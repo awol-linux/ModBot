@@ -7,7 +7,11 @@ import typing
 
 settings = mongo.settings()
 log_channel_id = settings.get('log_channel_id')
+
 def Diff(li1, li2):
+    """
+    Give two lists and return the diffrances
+    """
     li_dif = [i for i in li1 + li2 if i not in li1 or i not in li2]
     return li_dif
 
@@ -22,6 +26,10 @@ class public_logger(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_update(self, before, after):
+        '''
+        If role is mute then log mute
+        Else log the role change
+        '''
         roles = Diff(before.roles,  after.roles)
         muted_role = settings.get('muted_role')
         for role in roles:
@@ -38,26 +46,39 @@ class public_logger(commands.Cog):
                 
     @commands.Cog.listener()
     async def on_member_ban(self, guild, user: discord.User):
+        '''
+        Log ban events
+        '''
         action = 'Banned'
         log_action = discord.AuditLogAction.ban
         entry =  await self.get_audit_log_event(log_action=log_action, guild=guild, user=user, action=action)
         await self.log_event(action, entry)
 
     async def log_event(self, action=None, entry=None, roles=None): 
+        '''
+        Send event into moderation log
+        '''
         admin_log = await self.bot.fetch_channel(log_channel_id)
         embedVar = discord.Embed(title='Moderaton')
         embedVar.add_field(name="Moderator", value=entry.user.mention, inline=True)
+        
+        # If role that was changed in audit log event 
         if roles is not None:
             for role in roles:
                 embedVar.add_field(name="Action", value=action + ' ' + role.mention, inline=True)
         else:
             embedVar.add_field(name="Action", value=action, inline=True)
         embedVar.add_field(name="Member", value=entry.target.mention, inline=True)
+        
+        # If reason exists
         if entry.reason:
             embedVar.add_field(name="Reason", value=entry.reason, inline=False)
         await admin_log.send(embed=embedVar)
- 
+
     async def get_audit_log_event(self, log_action=None, guild=None, action=None, user=None):
+        '''
+        Get audit log events that match action and target if target exists
+        '''
         async for entry in guild.audit_logs(limit=10):
             if entry.action == log_action:
                 if entry.target == user or user == None:
