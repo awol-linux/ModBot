@@ -19,6 +19,6 @@ $ cp .mongoenv.sample .mongoenv
 $ nano defaults.py # set default settings in here see chart below for descriptions
 $ nano .discordenv.sample # set your discord-token and use the same password as set earlier
 $ cp .discordenv.sample .mongoenv
-$ docker build . -t modmail
+$ docker build . -t mod-bot
 $ docker compose up -d
 ```
