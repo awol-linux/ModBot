@@ -13,7 +13,7 @@
 ### Installation instructions
 #### Make sure you put your own secrets into the config files before you build the container
 ```
-$ git clone https://github.com/NetworkChuckDiscord/Modmail.git && cd Modmail
+$ git clone https://github.com/awol-linux/ModBot.git && cd ModBot
 $ nano .mongoenv.sample # set the mongodb password here
 $ cp .mongoenv.sample .mongoenv
 $ nano defaults.py # set default settings in here see chart below for descriptions
