@@ -5,12 +5,16 @@ from discord.ext import commands
 import discord
 import mongo 
 
-settings = mongo.settings()
 
-if not settings.print_all():
-    import defaults 
-else:
-    print(settings.print_all())
+#if not settings.print_all():
+#    import defaults 
+#else:
+#    print(settings.print_all())
+async def get_pre(bot, message):
+    if message.guild is not None:
+        settings = mongo.settings(message.guild)
+        prefix = settings.get('prefix')
+    return prefix
 
 TOKEN = os.getenv('DISCORD_TOKEN')
 
@@ -19,7 +23,7 @@ intents.typing = False
 intents.presences = False
 intents.members = True
 
-bot = commands.Bot(command_prefix=settings.get('prefix'), 
+bot = commands.Bot(command_prefix=get_pre, 
                    status='active',
                    help_command=help(),
                    intents=intents,
@@ -31,8 +35,9 @@ bot = commands.Bot(command_prefix=settings.get('prefix'),
 async def on_ready():
     print('Connected to bot: {}'.format(bot.user.name))
     print('Bot ID: {}'.format(bot.user.id))
-    print('Prefix is: {}'.format(settings.get('prefix')))
-    print('Category ID: {}'.format(settings.get('category_id')))
+#    print('Prefix is: {}'.format(settings.get('prefix')))
+#    print('Category ID: {}'.format(settings.get('category_id')))
 
 bot.load_extension('logger')
+bot.load_extension('other_commands')
 bot.run(TOKEN)

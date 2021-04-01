@@ -5,8 +5,6 @@ import mongo
 import datetime
 import typing
 
-settings = mongo.settings()
-log_channel_id = settings.get('log_channel_id')
 
 def Diff(li1, li2):
     """
@@ -30,19 +28,20 @@ class public_logger(commands.Cog):
         If role is mute then log mute
         Else log the role change
         '''
-        roles = Diff(before.roles,  after.roles)
-        muted_role = settings.get('muted_role')
+        roles = Diff(before.roles, after.roles)
+        self.settings = mongo.settings(after.guild)
+        muted_role = self.settings.get('muted_role')
         for role in roles:
             if role.id == muted_role:
-                action = 'Toggled mute'
+                action = 'Toggled_Mute'
                 roles=None
             else:
-                action = "Toggled Role(s)"
+                action = "Toggled_Role"
 
             log_action = discord.AuditLogAction.member_role_update
             guild = after.guild
             entry =  await self.get_audit_log_event(log_action=log_action, guild=guild, user=after, action=action)
-            await self.log_event(action, entry, roles)
+            await self.log_event(action=action, entry=entry, roles=roles, guild=guild)
                 
     @commands.Cog.listener()
     async def on_member_ban(self, guild, user: discord.User):
@@ -52,13 +51,13 @@ class public_logger(commands.Cog):
         action = 'Banned'
         log_action = discord.AuditLogAction.ban
         entry =  await self.get_audit_log_event(log_action=log_action, guild=guild, user=user, action=action)
-        await self.log_event(action, entry)
+        await self.log_event(action=action, entry=entry, guild=guild)
 
-    async def log_event(self, action=None, entry=None, roles=None): 
+    async def log_event(self, action=None, entry=None, guild=None, roles=None): 
         '''
         Send event into moderation log
         '''
-        admin_log = await self.bot.fetch_channel(log_channel_id)
+        log = await self.bot.fetch_channel(self.log_location(action, guild))
         embedVar = discord.Embed(title='Moderaton')
         embedVar.add_field(name="Moderator", value=entry.user.mention, inline=True)
         
@@ -73,7 +72,7 @@ class public_logger(commands.Cog):
         # If reason exists
         if entry.reason:
             embedVar.add_field(name="Reason", value=entry.reason, inline=False)
-        await admin_log.send(embed=embedVar)
+        await log.send(embed=embedVar)
 
     async def get_audit_log_event(self, log_action=None, guild=None, action=None, user=None):
         '''
@@ -83,3 +82,7 @@ class public_logger(commands.Cog):
             if entry.action == log_action:
                 if entry.target == user or user == None:
                     return entry
+    def log_location(self, log_item, guild):
+        self.settings = mongo.settings(guild)
+        channel_id = self.settings.get(log_item)
+        return channel_id
