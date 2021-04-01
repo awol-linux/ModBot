@@ -24,7 +24,8 @@ settingcol.insert_many([
     { 'name' : "log_channel_id", 'value' : 788119131068301335, 'Description': 'Channel where log results go' },
     { 'name' : "Toggled_Mute", 'value' : 788119131068301335, 'Description': 'Channel where log results go' },
     { 'name' : "Toggled_Role", 'value' : 788119131068301335, 'Description': 'Channel where log results go' },
-    { 'name' : "Banned", 'value' : 788119131068301335, 'Description': 'Channel where log results go' }])
+    { 'name' : "Banned", 'value' : 788119131068301335, 'Description': 'Channel where log results go' },
+    { 'name' : "Unbanned", 'value' : 788119131068301335, 'Description': 'Channel where log results go' }])
 
 counts = settingcol.find({},{ "addresses": { "$slice": [0, 1] } ,'_id': 0})
 for key in counts:

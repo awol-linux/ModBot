@@ -58,7 +58,7 @@ class public_logger(commands.Cog):
         '''
         Log ban events
         '''
-        action = 'unbanned'
+        action = 'Unbanned'
         log_action = discord.AuditLogAction.unban
         entry =  await self.get_audit_log_event(log_action=log_action, guild=guild, user=user, action=action)
         await self.log_event(action=action, entry=entry, guild=guild)
