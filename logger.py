@@ -53,6 +53,16 @@ class public_logger(commands.Cog):
         entry =  await self.get_audit_log_event(log_action=log_action, guild=guild, user=user, action=action)
         await self.log_event(action=action, entry=entry, guild=guild)
 
+    @commands.Cog.listener()
+    async def on_member_unban(self, guild, user: discord.User):
+        '''
+        Log ban events
+        '''
+        action = 'unbanned'
+        log_action = discord.AuditLogAction.unban
+        entry =  await self.get_audit_log_event(log_action=log_action, guild=guild, user=user, action=action)
+        await self.log_event(action=action, entry=entry, guild=guild)
+
     async def log_event(self, action=None, entry=None, guild=None, roles=None): 
         '''
         Send event into moderation log
