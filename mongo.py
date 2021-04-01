@@ -3,7 +3,7 @@ import os
 
 PASS = os.getenv('MONGO_PASSWORD')
 USER = os.getenv('MONGO_USER')
-mdbclient = MongoClient('172.30.0.10', 27017, username=USER, password=PASS)
+mdbclient = MongoClient('mongodb', 27017, username=USER, password=PASS)
 RemoveID = { "addresses": { "$slice": [0, 1] } ,'_id': 0}
 
 

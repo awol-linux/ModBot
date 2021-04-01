@@ -1,15 +1,7 @@
-networks:
-  app-tier:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 172.30.0.0/24
 services:
   modbot:
     image: modbot
     env_file: .discordenv
-    networks: 
-      - app-tier
   mongodb:
     image: mongo:latest
     env_file: .mongoenv
@@ -18,9 +10,6 @@ services:
       - 27017:27017
     volumes: 
       - mongodb_data_container:/data/db
-    networks:
-        app-tier:
-            ipv4_address: 172.30.0.10
 
 volumes:
   mongodb_data_container:

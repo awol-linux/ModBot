@@ -5,7 +5,7 @@ PASS = os.getenv('MONGO_PASSWORD')
 USER = os.getenv('MONGO_USER')
 
 # Create connection to MongoDB
-client = MongoClient('172.30.0.10', 27017 , username=USER, password=PASS)
+client = MongoClient('mongodb', 27017 , username=USER, password=PASS)
 setting = client['settingdb-bot-test']
 settingcol = setting['ModBot']
 
