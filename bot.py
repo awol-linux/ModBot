@@ -4,7 +4,8 @@ import os
 from discord.ext import commands
 import discord
 import mongo 
-
+import defaults
+from other_commands import help
 
 #if not settings.print_all():
 #    import defaults 
@@ -22,6 +23,7 @@ intents = discord.Intents.default()
 intents.typing = False
 intents.presences = False
 intents.members = True
+intents.guilds = True
 
 bot = commands.Bot(command_prefix=get_pre, 
                    status='active',
@@ -37,6 +39,10 @@ async def on_ready():
     print('Bot ID: {}'.format(bot.user.id))
 #    print('Prefix is: {}'.format(settings.get('prefix')))
 #    print('Category ID: {}'.format(settings.get('category_id')))
+
+@bot.event
+async def on_guild_join(guild):
+    await defaults.set_defaults(guild)
 
 bot.load_extension('logger')
 bot.load_extension('other_commands')

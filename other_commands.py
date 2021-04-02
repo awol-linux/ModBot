@@ -3,7 +3,8 @@ import discord
 import mongo
 import time
 from difflib import get_close_matches
-import psutil 
+import psutil
+import defaults
 
 #settings = mongo.settings()
 #log_channel_id = settings.get('log_channel_id')
@@ -23,7 +24,7 @@ def is_admin():
             admin_roles = settings.get('admin_roles')
             perms = False
             for role in ctx.author.roles:
-                if str(role.id) in admin_roles.split(';'):
+                if str(role.id) in str(admin_roles).split(';'):
                     perms = True
             if ctx.author.guild_permissions.administrator:
                 perms = True
@@ -62,6 +63,7 @@ class settings_commands(commands.Cog):
         self.bot = bot
         self._last_member = None
 
+    @commands.command(name='lookup', help='Get the value of a setting')
     @is_admin()
     async def lookup(self, ctx, arg):
         settingkeys = []
@@ -87,7 +89,11 @@ class settings_commands(commands.Cog):
             await self.reload(ctx)
             await ctx.reply(embed=embedVar, content='reloaded')
         else:
-            await ctx.reply(f"{arg1} didn't have any results. Try {settings.get('prefix')}lookup {arg1} to search.")
+            create = settings.create(arg1, arg2)
+            await ctx.reply(f"{arg1} didn't have any results so i created a new one")
+            await(self.lookup(ctx, arg1))
+            await self.reload(ctx)
+            
 
     @commands.command(name='reload', help='Manually reload config')
     @is_admin()
@@ -106,6 +112,12 @@ class settings_commands(commands.Cog):
         for setting in settings.print_all():
             embedVar.add_field(name=setting['name'] + ' = ' + str(setting['value']), value=setting['Description'], inline=False)
         await ctx.reply(embed=embedVar)
+
+    @commands.command(name='set_log', help='Archives the complaint putting a full log in admin log')
+    @is_admin()
+    async def set_log(self, ctx):
+        await self.set(ctx, 'log_channel_id', ctx.channel.id)
+
 
 
 class help(commands.MinimalHelpCommand):

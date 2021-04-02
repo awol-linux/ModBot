@@ -92,12 +92,10 @@ class log_handlers(object):
         '''
         Send event into moderation log
         '''
-        log = await self.bot.fetch_channel(self.log_location(action, guild))
-
-        # dont log bots because bots log bots
+        # dont log bots because they log themselves
         if entry.user.bot:
             return
-
+        # create embed
         embedVar = discord.Embed(title='Moderation')
         embedVar.add_field(name="Moderator", value=entry.user.mention, inline=True)
         
@@ -119,7 +117,10 @@ class log_handlers(object):
             embedVar.add_field(name="Reason", value=entry.reason, inline=False)
 
         # send log
-        await log.send(embed=embedVar)
+        log_channel = self.log_location(action, guild)
+        if log_channel is not None:
+            log = await self.bot.fetch_channel(log_channel)
+            await log.send(embed=embedVar)
 
      async def get_audit_log_event(self, log_action=None, guild=None, action=None, user=None):
         '''
@@ -136,6 +137,4 @@ class log_handlers(object):
         channel_id = self.settings.get(log_item)
         if channel_id is None:
             channel_id = self.settings.get('log_channel_id')
-        return channel_id
-
-   
+        return channel_id 
