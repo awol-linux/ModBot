@@ -33,7 +33,7 @@ class public_logger(commands.Cog):
         self.settings = mongo.settings(after.guild)
         muted_role = self.settings.get('muted_role')
         for role in roles:
-            if role.id == muted_role:
+            if str(role.id) == str(muted_role):
                 action = 'Toggled_Mute'
                 roles=None
             else:

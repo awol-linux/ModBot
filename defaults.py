@@ -9,8 +9,11 @@ USER = os.getenv('MONGO_USER')
 client = MongoClient('mongodb', 27017 , username=USER, password=PASS)
 
 async def set_defaults(guild, channel_id="", admin_roles='', muted_role=""):
-    setting = client['settingdb-' + str(guild.name)]
-    settingcol = setting['ModBot']
+    guildname = str(guild.name).lower()
+    namesafe = ''.join(e for e in guildname if e.isalnum())
+    guildid = str(guild.id)
+    setting = client['ModBot']
+    settingcol = setting['settingdb-' + namesafe + guildid[-4]]
 
     # Clear settings
 

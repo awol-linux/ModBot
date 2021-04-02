@@ -8,11 +8,14 @@ RemoveID = { "addresses": { "$slice": [0, 1] } ,'_id': 0}
 
 
 class settings():
-    def __init__(self, guildname):
+    def __init__(self, guild):
         self.test = 'test'
-        print('settingdb-' + str(guildname.name))
-        self.setting = mdbclient['settingdb-' + str(guildname.name)]
-        self.settingcol = self.setting['ModBot']
+        self.guild_unsafe_name = str(guild.name).lower()
+        self.namesafe = ''.join(e for e in self.guild_unsafe_name if e.isalnum())
+        self.guildid = str(guild.id)
+        self.setting = mdbclient['ModBot']
+        self.settingcol = self.setting['settingdb-' + self.namesafe + self.guildid[-4]]
+
 
     def get(self, othersetting):
         terms = { 'name' : othersetting }       
