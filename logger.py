@@ -56,7 +56,7 @@ class public_logger(commands.Cog):
 ## discord doesn't target so wauting for privat log
 #        elif before.channel != None and after.channel == None:
 #            action = 'Kicked_User_From_VC'
-            log_action = discord.AuditLogAction.member_disconnect
+#            log_action = discord.AuditLogAction.member_disconnect
         else:
             return True
         self.settings = mongo.settings(member.guild)
