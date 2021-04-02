@@ -36,10 +36,16 @@ class settings():
             values.append(value)
        return values
 
-    def create(self, key, value):
+    def create(self, key, value, *description_array):
         terms = { 'name' : key }
         setting = { '$set' : { 'value' : value }}
         self.settingcol.update_one(terms, setting, upsert = True)
+        if len(description_array) == 0:
+            description_string = "No description given"
+        else:
+            description_string = " ".join(description_array)
+        description = { '$set' : { 'Description' : description_string }}
+        self.settingcol.update_one(terms, description, upsert = False)
 
     def update(self, key, value):
         if self.get(key):

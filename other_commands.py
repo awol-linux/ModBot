@@ -89,7 +89,7 @@ class settings_commands(commands.Cog):
             await self.reload(ctx)
             await ctx.reply(embed=embedVar, content='reloaded')
         else:
-            create = settings.create(arg1, arg2)
+            create = settings.create(arg1, arg2, *args)
             await ctx.reply(f"{arg1} didn't have any results so i created a new one")
             await(self.lookup(ctx, arg1))
             await self.reload(ctx)
