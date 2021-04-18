@@ -73,17 +73,19 @@ class settings_commands(commands.Cog):
     @commands.command(name='lookup', help='Get the value of a setting')
     @is_admin()
     async def lookup(self, ctx, setting):
-        embedVar = discord.Embed(title=None, inline=False)
+        embedVar = discord.Embed(title='', inline=False)
         self.bot_member = ctx.guild.get_member(self.bot.user.id)
         embedVar.set_author(name=f'{self.bot_member.display_name} | {ctx.command}', icon_url=str(self.bot_member.avatar_url_as(size=512)))
         settingkeys = []
         settings = mongo.settings(ctx.guild)
-        for setting in settings.print_all():
-            settingkeys.append(setting['name'])
+        for setting_list in settings.print_all():
+            settingkeys.append(setting_list['name'])
+        print(settingkeys)
         matches = (get_close_matches(setting, settingkeys))
+        print(matches)
         for match in matches:
             embedVar.add_field(name=match + ' = ' + str(settings.get(match)), value=settings.get_description(setting), inline=False)
-        await ctx.reply(embed=embedVar)
+        return await ctx.reply(embed=embedVar)
 
     @commands.command(name='set', help='Changes the value of a setting')
     @is_admin()

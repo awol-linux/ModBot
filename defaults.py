@@ -17,7 +17,7 @@ async def set_defaults(guild, channel_id="", admin_roles='', muted_role=""):
 
     # Clear settings
 
-    client.drop_database(setting)
+    settingcol.drop()
 
     # Insert the settings into Mongo
 
@@ -30,7 +30,7 @@ async def set_defaults(guild, channel_id="", admin_roles='', muted_role=""):
     counts = settingcol.find({},{ "addresses": { "$slice": [0, 1] } ,'_id': 0})
     for key in counts:
         print(key)
-    print(setting)
+    print(settingcol)
 async def set_action_items():
     data = [
             { 'name' : 'Toggled_Mute', 'prettys': ['Muted', 'Unmuted'] },
@@ -44,6 +44,6 @@ async def set_action_items():
     action_item_coll.insert_many(data)
 
 if __name__ == "__main__":
-    mock_guild = type('Guild', (object,), {'name':'bot-test'})
+#    mock_guild = type('Guild', (object,), {'name':'bot-test'})
     # asyncio.run(set_defaults(mock_guild, 788119131068301335, admin_roles=802721665787887627, muted_role=802721664365232158))
     asyncio.run(set_action_items())
