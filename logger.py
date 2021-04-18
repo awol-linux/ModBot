@@ -79,7 +79,7 @@ class public_logger(commands.Cog):
             log_action = discord.AuditLogAction.member_update
 
         elif before.deaf != after.deaf:
-            action = 'Toggeled_VC_deaf'
+            action = 'Toggled_VC_deaf'
             if before.deaf is False:
                 action_pretty = 'VC deafened'
             elif before.deaf is True:
@@ -169,7 +169,7 @@ class log_handlers(object):
 
         # create embed
         embedVar = discord.Embed(title=None)
-        embedVar.set_author(name=f'{self.bot_member.display_name} | {action_pretty}' , icon_url=str(guild.icon_url_as(size=512)))
+        embedVar.set_author(name=f'{self.bot_member.display_name} | {action_pretty}', icon_url=str(self.bot_member.avatar_url))
         
         embedVar.add_field(name="Moderator", value=entry.user.mention, inline=True)
 
@@ -183,12 +183,14 @@ class log_handlers(object):
         # Tf target is known add target and add target_id to footer
         if entry.target is not None:
             target = entry.target
-        if target is not None:
+        if target is not None and hasattr(target, 'guild'):
             embedVar.add_field(name="Member", value=target.mention, inline=True)
             embedVar.set_footer(text=f'Mod: {entry.user.id} | User: {entry.target.id}')
-        else:
+        elif target is not None and not hasattr(target, 'guild'):
+            embedVar.add_field(name="Member", value=f'{target.name}#{target.discriminator}', inline=True)
+            embedVar.set_footer(text=f'Mod: {entry.user.id} | User: {entry.target.id}')
+        elif entry.target is None:
             embedVar.set_footer(text=f'Mod: {entry.user.id}')
-
 
         # If reason exists
         if entry.reason is not None:
