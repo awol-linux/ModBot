@@ -168,7 +168,7 @@ class log_handlers(object):
             return
 
         # create embed
-        embedVar = discord.Embed(title=None)
+        embedVar = discord.Embed(title='')
         embedVar.set_author(name=f'{self.bot_member.display_name} | {action_pretty}', icon_url=str(self.bot_member.avatar_url))
         
         embedVar.add_field(name="Moderator", value=entry.user.mention, inline=True)
