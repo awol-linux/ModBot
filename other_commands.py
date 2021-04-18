@@ -46,7 +46,7 @@ class log_location(commands.Cog):
     @is_admin()
     async def get_action(self, ctx, *action_item):
         action_items = mongo.action_items()
-        embedVar = discord.Embed(title=None, inline=False)
+        embedVar = discord.Embed(title='', inline=False)
         self.bot_member = ctx.guild.get_member(self.bot.user.id)
         embedVar.set_author(name=f'{self.bot_member.display_name} | {ctx.command}', icon_url=str(self.bot_member.avatar_url_as(size=512)))
         matches = action_items.get_action_item(action_item)
@@ -90,7 +90,7 @@ class settings_commands(commands.Cog):
     @commands.command(name='set', help='Changes the value of a setting')
     @is_admin()
     async def set(self, ctx, setting, value, *desc):
-        embedVar = discord.Embed(title=None, inline=False)
+        embedVar = discord.Embed(title='', inline=False)
         print(ctx)
         self.bot_member = ctx.guild.get_member(self.bot.user.id)
         embedVar.set_author(name=f'{self.bot_member.display_name} | {ctx.command}', icon_url=str(self.bot_member.avatar_url_as(size=512)))
@@ -129,7 +129,7 @@ class settings_commands(commands.Cog):
     @commands.command(name='show', help='Shows the settings and their value')
     @is_admin()
     async def show(self, ctx):
-        embedVar = discord.Embed(title=None, inline=False)
+        embedVar = discord.Embed(title='', inline=False)
         self.bot_member = ctx.guild.get_member(self.bot.user.id)
         embedVar.set_author(name=f'{self.bot_member.display_name} | {ctx.command}', icon_url=str(self.bot_member.avatar_url_as(size=512)))
         settings = mongo.settings(ctx.guild)
@@ -141,7 +141,7 @@ class settings_commands(commands.Cog):
     @commands.command(name='ping', help='Replys with server status')
     @is_admin()
     async def ping(self, ctx):
-        embedVar = discord.Embed(title=None, inline=True)
+        embedVar = discord.Embed(title='', inline=True)
         self.bot_member = ctx.guild.get_member(self.bot.user.id)
         embedVar.set_author(name=f'{self.bot_member.display_name} | {ctx.command}', icon_url=str(self.bot_member.avatar_url_as(size=512)))
 
