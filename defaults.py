@@ -23,9 +23,9 @@ async def set_defaults(guild, channel_id="", admin_roles='', muted_role=""):
 
     settingcol.insert_many([
         { 'name' : "prefix", 'value' : "./", 'Description' : 'Sets the command prefix' }, 
-        { 'name' : "admin_roles",  'value' : admin_roles, 'Description' : 'Role users get when they are muted' } ,
-        { 'name' : "muted_role",  'value' : muted_role, 'Description' : 'Role users get when they are muted' } ,
-        { 'name' : "log_channel_id", 'value' : channel_id, 'Description': 'Channel where log results go' }])
+        { 'name' : "admin_roles",  'value' : admin_roles, 'Description' : 'A user needs a role in this list to run commands (assuming they don\'t have discord Administrator perms)' } ,
+        { 'name' : "muted_role",  'value' : muted_role, 'Description' : 'A user gets this role when they are muted' } ,
+        { 'name' : "log_channel_id", 'value' : channel_id, 'Description': 'The default log channel. Unless an action item has a channel set, the bot will log those action items to this channel.' }])
 
     counts = settingcol.find({},{ "addresses": { "$slice": [0, 1] } ,'_id': 0})
     for key in counts:
