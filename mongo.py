@@ -3,15 +3,37 @@ import os
 
 PASS = os.getenv("MONGO_PASSWORD")
 USER = os.getenv("MONGO_USER")
-mdbclient = MongoClient("mongodb", 27017, username=USER, password=PASS)
 RemoveID = {"addresses": {"$slice": [0, 1]}, "_id": 0}
-botdb = mdbclient["ModBot"]
+
+
+def start_db(func):
+    """
+    context manager for database object so it can be opened and closed for every function
+    """
+
+    def create_db_object(*args, **kwargs):
+        called_class = args[0]
+        mdbclient = MongoClient("mongodb", 27017, username=USER, password=PASS)
+        botdb = mdbclient["ModBot"]
+        called_class.action_item_coll = botdb["action_items"]
+        print(args)
+        if hasattr(args[0], "guild"):
+            guild = args[0].guild
+            guildname = "".join(e for e in str(guild.name).lower() if e.isalnum())
+            guildid = str(guild.id)
+            called_class.settingcol = botdb["settingdb-" + guildname + guildid[-4]]
+        run = func(*args, **kwargs)
+        mdbclient.close()
+        return run
+
+    return create_db_object
 
 
 class action_items:
     def __init__(self):
-        self.action_item_coll = botdb["action_items"]
+        pass
 
+    @start_db
     def get_action_pretty(self, action_item):
         """
         Runs a database query using the main action item and returns the pretty names
@@ -22,10 +44,11 @@ class action_items:
         """
         terms = {"name": action_item}
         values = []
-        for value in self.action_item_coll.find(terms, RemoveID):
+        for value in action_item_coll.find(terms, RemoveID):
             values.append(value["value"])
         return values
 
+    @start_db
     def get_action_item(self, action_pretty):
         """
         Runs a DB query using a pretty name and returns any related anction dict
@@ -39,11 +62,12 @@ class action_items:
         else:
             terms = {"prettys": " ".join(action_pretty)}
         values = []
-        for value in self.action_item_coll.find(terms, RemoveID):
+        for value in action_item_coll.find(terms, RemoveID):
             print(value)
             values.append(value)
         return values
 
+    @start_db
     def insert_table(self, data):
         """
         Pushes the action table into the db
@@ -57,16 +81,15 @@ class action_items:
 
 class settings:
     def __init__(self, guild):
-        self.guild_unsafe_name = str(guild.name).lower()
-        self.namesafe = "".join(e for e in self.guild_unsafe_name if e.isalnum())
-        self.guildid = str(guild.id)
-        self.settingcol = botdb["settingdb-" + self.namesafe + self.guildid[-4]]
+        self.guild = guild
 
+    @start_db
     def get(self, othersetting):
         terms = {"name": othersetting}
         values = []
         for value in self.settingcol.find(terms, RemoveID):
             values.append(value["value"])
+        print(values)
         if len(values) == 1:
             return values[0]
         elif len(values) == 0:
@@ -74,13 +97,12 @@ class settings:
         else:
             return values
 
+    @start_db
     def print_all(self):
         terms = {}
-        values = []
-        for value in self.settingcol.find(terms, RemoveID):
-            values.append(value)
-        return values
+        return [value for value in self.settingcol.find(terms, RemoveID)]
 
+    @start_db
     def create(self, key, value, *description_array):
         terms = {"name": key}
         setting = {"$set": {"value": value}}
@@ -90,8 +112,9 @@ class settings:
         else:
             description_string = " ".join(description_array)
         description = {"$set": {"Description": description_string}}
-        self.settingcol.update_one(terms, description, upsert=False)
+        return self.settingcol.update_one(terms, description, upsert=False)
 
+    @start_db
     def update(self, key, value, *description_array):
         if self.get(key):
             oldkey = self.get(key)
@@ -107,6 +130,7 @@ class settings:
             out = {"oldkey": oldkey, "newkey": self.get(key)}
             return out
 
+    @start_db
     def get_description(self, name):
         terms = {"name": name}
         values = []
