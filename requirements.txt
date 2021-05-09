@@ -2,5 +2,3 @@ discord
 pymongo
 psutil
 datetime
-uvicorn[standered]
-fastapi
