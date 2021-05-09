@@ -97,9 +97,24 @@ class set_settings(commands.Cog):
     async def set_log(self, ctx, *action_items):
         if action_items:
             for item in action_items:
-                await ctx.invoke(self.bot.get_command('set'), item, ctx.channel.id, "Log", "Channel", "For", item)
+                await ctx.invoke(
+                    self.bot.get_command("set"),
+                    item,
+                    ctx.channel.id,
+                    "Log",
+                    "Channel",
+                    "For",
+                    item,
+                )
         else:
-            await ctx.invoke(self.bot.get_command('set'), 'log_channel_id', ctx.channel.id,"Default", "Log", "Channel")
+            await ctx.invoke(
+                self.bot.get_command("set"),
+                "log_channel_id",
+                ctx.channel.id,
+                "Default",
+                "Log",
+                "Channel",
+            )
 
     @commands.command(
         name="add_admin", help="Add roles(s) to the list of roles that have admin perms"
@@ -118,7 +133,7 @@ class set_settings(commands.Cog):
         role_string = ";".join(new_roles)
         print(role_string)
         command_args = ["admin_roles", role_string]
-        await ctx.invoke(self.bot.get_command('set'), *command_args)
+        await ctx.invoke(self.bot.get_command("set"), *command_args)
 
 
 class admin_commands(commands.Cog):
@@ -208,9 +223,8 @@ class dev_commands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self._last_member = None
-        self.admin_commands = self.bot.get_cog('admin_commands')
+        self.admin_commands = self.bot.get_cog("admin_commands")
 
-    
     @commands.command(name="set", help="Changes the value of a setting")
     @commands.is_owner()
     async def set(self, ctx, setting, value, *desc):
